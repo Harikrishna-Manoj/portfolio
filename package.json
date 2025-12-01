@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://Harikrishna-Manoj.github.io/Portfolio",
+  "homepage": "https://harikrishna-manoj.github.io/Portfolio/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
