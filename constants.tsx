@@ -27,7 +27,7 @@ export const EXPERIENCES: Experience[] = [
     role: "Flutter Developer",
     period: "Jun 2024 - Nov 2024",
     description: "Developed and maintained cross-platform mobile applications for the innovative 'Game of Giving' initiative, focusing on resource redistribution and social impact.",
-    tech: ["Flutter", "Dart", "Firebase", "REST APIs"]
+    tech: ["Flutter", "Dart", "GetX", "REST APIs"]
   },
   {
     company: "Brototype, Ernakulam",
@@ -77,7 +77,7 @@ export const PROJECTS: Project[] = [
 
 export const SKILLS: SkillCategory[] = [
   { category: "Languages & Frameworks", icon: <Code2 className="w-6 h-6" />, items: ["Dart", "Flutter", "SQL", "OOPS", "REST APIs", "GraphQL"] },
-  { category: "State Management & Architecture", icon: <Layout className="w-6 h-6" />, items: ["Bloc", "Provider", "GetX", "Clean Architecture", "MVC", "SOLID Principle"] },
-  { category: "Backend & Database", icon: <Database className="w-6 h-6" />, items: ["Firebase", "Hive", "PostgreSQL", "Data Structure", "Payment Gateway"] },
+  { category: "State Management & Architecture", icon: <Layout className="w-6 h-6" />, items: ["Bloc", "Provider", "GetX", "Clean Architecture", "MVVM", "SOLID Principle"] },
+  { category: "Backend & Database", icon: <Database className="w-6 h-6" />, items: ["Firebase", "Hive", "SQL", "Data Structure", "Payment Gateway"] },
   { category: "Tools & DevOps", icon: <Cpu className="w-6 h-6" />, items: ["Git/GitHub", "VS Code", "Android Studio", "Figma", "Codemagic", "ChatGPT", "Davinci Resolve", "Photoshop"] }
 ];

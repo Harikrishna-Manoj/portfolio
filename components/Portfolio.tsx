@@ -161,10 +161,10 @@ const Portfolio: React.FC = () => {
     setTimeout(() => {
       const subject = encodeURIComponent(`Portfolio Contact from ${formData.name}`);
       const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
-      
+
       // Open mailto link
       window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-      
+
       setIsSubmitting(false);
       setIsSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
@@ -215,7 +215,7 @@ const Portfolio: React.FC = () => {
         top: offsetPosition,
         behavior: "smooth"
       });
-      
+
       setIsMenuOpen(false);
     }
   };
@@ -236,8 +236,8 @@ const Portfolio: React.FC = () => {
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-lg shadow-indigo-500/5 border-b border-slate-200/50 dark:border-slate-800/50 py-4' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <a 
-            href="#home" 
+          <a
+            href="#home"
             onClick={(e) => scrollToSection(e, 'home')}
             className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2 group"
           >
@@ -261,7 +261,7 @@ const Portfolio: React.FC = () => {
                 <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400 transform origin-left transition-transform duration-300 ${activeSection === link.id ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
               </a>
             ))}
-            
+
             {/* Theme Toggle Button Desktop */}
             <button
               onClick={toggleTheme}
@@ -323,10 +323,10 @@ const Portfolio: React.FC = () => {
         {/* Background blobs with parallax and fluid animation */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div style={{ transform: `translateY(${scrollY * 0.5}px)` }} className="absolute top-20 left-10 transition-transform duration-75 ease-out">
-             <div className="w-72 h-72 bg-indigo-600/10 dark:bg-indigo-600/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen"></div>
+            <div className="w-72 h-72 bg-indigo-600/10 dark:bg-indigo-600/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen"></div>
           </div>
           <div style={{ transform: `translateY(${scrollY * 0.2}px)` }} className="absolute bottom-20 right-10 transition-transform duration-75 ease-out">
-             <div className="w-96 h-96 bg-violet-600/10 dark:bg-violet-600/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen" style={{ animationDelay: '2s' }}></div>
+            <div className="w-96 h-96 bg-violet-600/10 dark:bg-violet-600/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen" style={{ animationDelay: '2s' }}></div>
           </div>
         </div>
 
@@ -444,8 +444,8 @@ const Portfolio: React.FC = () => {
                 </p>
                 {/* RESUME BUTTON - UPDATED FOR GITHUB PAGES */}
                 <a
-                  href="Harikrishna_Flutter_Developer_Resume.pdf"
-                  download="Harikrishna_Manoj_Resume.pdf"
+                  href="Flutter_Developer_Harikrishna_9539440572.pdf"
+                  download="Flutter_Developer_Harikrishna_9539440572.pdf"
                   className="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors group"
                 >
                   Download Resume <Download className="w-4 h-4 transition-transform group-hover:translate-y-1" />
@@ -600,7 +600,7 @@ const Portfolio: React.FC = () => {
         <div className="container mx-auto px-6">
           <RevealOnScroll>
             <div className="max-w-5xl mx-auto bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row shadow-2xl">
-              
+
               {/* Left Side: Info */}
               <div className="md:w-5/12 p-10 bg-indigo-600 text-white relative overflow-hidden flex flex-col justify-between">
                 {/* Background Blobs with Animation */}
@@ -630,17 +630,17 @@ const Portfolio: React.FC = () => {
                       <span className="group-hover/item:translate-x-1 transition-transform font-medium">{PHONE_NUMBER}</span>
                     </button>
                   </div>
-                  
+
                   {/* Social Links moved here */}
                   <div>
                     <p className="text-indigo-200 mb-4 text-sm font-semibold uppercase tracking-wider">Connect with me</p>
                     <div className="flex gap-4 text-white">
-                        <a href="https://www.linkedin.com/in/harikrishna-manoj-5851411b9/" target="_blank" rel="noopener noreferrer" className="p-3 bg-indigo-500 rounded-full hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-900/30 active:scale-95 group/link" aria-label="LinkedIn Profile">
+                      <a href="https://www.linkedin.com/in/harikrishna-manoj-5851411b9/" target="_blank" rel="noopener noreferrer" className="p-3 bg-indigo-500 rounded-full hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-900/30 active:scale-95 group/link" aria-label="LinkedIn Profile">
                         <Linkedin className="w-5 h-5 transition-transform group-hover/link:scale-110" />
-                        </a>
-                        <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="p-3 bg-indigo-500 rounded-full hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-900/30 active:scale-95 group/link" aria-label="GitHub Profile">
+                      </a>
+                      <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="p-3 bg-indigo-500 rounded-full hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-900/30 active:scale-95 group/link" aria-label="GitHub Profile">
                         <Github className="w-5 h-5 transition-transform group-hover/link:scale-110" />
-                        </a>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -649,7 +649,7 @@ const Portfolio: React.FC = () => {
               {/* Right Side: Form */}
               <div className="md:w-7/12 p-8 md:p-12 bg-white dark:bg-slate-900 flex flex-col justify-center">
                 <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Send a Message</h4>
-                
+
                 {isSubmitted ? (
                   <div className="h-full flex flex-col items-center justify-center py-12 text-center animate-in fade-in zoom-in duration-500">
                     <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6">
@@ -659,7 +659,7 @@ const Portfolio: React.FC = () => {
                     <p className="text-slate-600 dark:text-slate-400 max-w-xs">
                       Thanks for reaching out. Your email client should open shortly with the pre-filled message.
                     </p>
-                    <button 
+                    <button
                       onClick={() => setIsSubmitted(false)}
                       className="mt-8 px-6 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm font-medium"
                     >
@@ -670,10 +670,10 @@ const Portfolio: React.FC = () => {
                   <form onSubmit={handleFormSubmit} className="space-y-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Name</label>
-                      <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
                         required
                         value={formData.name}
                         onChange={handleInputChange}
@@ -683,10 +683,10 @@ const Portfolio: React.FC = () => {
                     </div>
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Email</label>
-                      <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
                         required
                         value={formData.email}
                         onChange={handleInputChange}
@@ -696,10 +696,10 @@ const Portfolio: React.FC = () => {
                     </div>
                     <div>
                       <label htmlFor="message" className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Message</label>
-                      <textarea 
-                        id="message" 
-                        name="message" 
-                        rows={4} 
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows={4}
                         required
                         value={formData.message}
                         onChange={handleInputChange}
@@ -707,9 +707,9 @@ const Portfolio: React.FC = () => {
                         placeholder="How can I help you?"
                       ></textarea>
                     </div>
-                    
-                    <button 
-                      type="submit" 
+
+                    <button
+                      type="submit"
                       disabled={isSubmitting}
                       className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
