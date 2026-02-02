@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./favicon.png" />
+  <title>Harikrishna Manoj - Flutter Developer</title>
+  <!-- Tailwind CSS via CDN is kept for simplicity. For production, installing via npm is recommended but this works fine for GitHub Pages. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'gradient-x': 'gradient-x 15s ease infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'blob': 'blob 7s infinite',
+          },
+          keyframes: {
+            'gradient-x': {
+              '0%, 100%': {
+                'background-size': '200% 200%',
+                'background-position': 'left center',
+              },
+              '50%': {
+                'background-size': '200% 200%',
+                'background-position': 'right center',
+              },
+            },
+            'float': {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+            'blob': {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+              '100%': { transform: 'translate(0px, 0px) scale(1)' },
+            }
+          },
+        },
+      },
+    }
+  </script>
+
+
+  <script type="module" crossorigin src="./assets/index-cdthbEV0.js"></script>
+</head>
+
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+  <div id="root"></div>
+  <!-- Entry point for Vite -->
+</body>
+
+</html>
