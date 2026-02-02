@@ -373,7 +373,7 @@ const Portfolio: React.FC = () => {
                 {/* Profile Image - UPDATED FOR GITHUB PAGES */}
                 <div className="relative h-full w-full bg-slate-100 dark:bg-slate-900 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center border border-slate-200 dark:border-slate-800 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-indigo-500/30 group-hover:shadow-xl group-hover:shadow-indigo-500/20">
                   <img
-                    src="profile.png"
+                    src={`${import.meta.env.BASE_URL}profile.png`}
                     alt="Harikrishna Manoj Profile"
                     className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700 ease-out"
                     onError={(e) => {
