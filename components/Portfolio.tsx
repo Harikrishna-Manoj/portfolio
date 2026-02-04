@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ScrollBackground from './ScrollBackground';
 import {
   Github,
   Linkedin,
@@ -218,7 +219,8 @@ const Portfolio: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-500/30 selection:text-indigo-600 dark:selection:text-indigo-200 transition-colors duration-300">
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-slate-100 font-sans selection:bg-indigo-500/30 selection:text-indigo-600 dark:selection:text-indigo-200 transition-colors duration-300">
+      <ScrollBackground />
 
       {/* Toast Notification for Copy */}
       {copyMessage && (
@@ -316,12 +318,12 @@ const Portfolio: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
-      <section id="home" className="pt-32 pb-20 md:pt-48 md:pb-32 px-6 bg-slate-50 dark:bg-slate-950 overflow-hidden relative transition-colors duration-300">
+      <section id="home" className="pt-32 pb-20 md:pt-48 md:pb-32 px-6 bg-transparent overflow-hidden relative transition-colors duration-300">
         {/* Animated Background Mesh */}
-        <div className="absolute inset-0 z-0 opacity-30 dark:opacity-20 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/30 blur-[120px] animate-blob"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-violet-500/30 blur-[120px] animate-blob animation-delay-2000"></div>
-          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-pink-500/20 blur-[100px] animate-blob animation-delay-4000"></div>
+        <div className="absolute inset-0 z-0 opacity-10 dark:opacity-10 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/20 blur-[120px] animate-blob"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-violet-500/20 blur-[120px] animate-blob animation-delay-2000"></div>
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-pink-500/10 blur-[100px] animate-blob animation-delay-4000"></div>
           <div className="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-900 bg-[size:30px_30px] [mask-image:radial-gradient(white,transparent_85%)]"></div>
         </div>
 
@@ -459,7 +461,7 @@ const Portfolio: React.FC = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
+      <section id="about" className="py-24 bg-white/40 dark:bg-slate-950/40 backdrop-blur-sm transition-colors duration-300 relative overflow-hidden">
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row gap-16 items-center">
             <motion.div
@@ -536,7 +538,7 @@ const Portfolio: React.FC = () => {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-24 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-300">
+      <section id="experience" className="py-24 bg-transparent transition-colors duration-300">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -596,7 +598,7 @@ const Portfolio: React.FC = () => {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
+      <section id="projects" className="py-24 bg-white/40 dark:bg-slate-950/40 backdrop-blur-sm transition-colors duration-300">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
             <h2 className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-tight text-sm">My Work</h2>
@@ -686,7 +688,7 @@ const Portfolio: React.FC = () => {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-24 bg-slate-50 dark:bg-slate-900/30 transition-colors duration-300">
+      <section id="skills" className="py-24 bg-transparent transition-colors duration-300">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-16 items-start max-w-6xl mx-auto">
             <div className="md:w-1/3 space-y-6 md:sticky md:top-32">
@@ -733,7 +735,7 @@ const Portfolio: React.FC = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
+      <section id="contact" className="py-24 bg-white/40 dark:bg-slate-950/40 backdrop-blur-sm transition-colors duration-300">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto bento-card border-none shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
