@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Github,
   Linkedin,
@@ -10,64 +11,62 @@ import {
   ChevronDown,
   Menu,
   X,
-  Globe,
   Terminal,
-  ClipboardCopy,
   Download,
   Send,
   Loader2,
   CheckCircle,
   Sun,
-  Moon
+  Moon,
+  Sparkles,
+  ArrowRight,
+  Globe,
+  ClipboardCopy
 } from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 import { CopyMessage } from '../types';
 import { EMAIL_ADDRESS, PHONE_NUMBER, NAV_LINKS, EXPERIENCES, PROJECTS, SKILLS } from '../constants';
 
-interface RevealOnScrollProps {
-  children: React.ReactNode;
-  className?: string;
-}
 
-// Custom hook for scroll reveal animation
-const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "" }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+// Typing animation component
+const TypewriterText: React.FC<{ texts: string[] }> = ({ texts }) => {
+  const [index, setIndex] = useState(0);
+  const [subIndex, setSubIndex] = useState(0);
+  const [reverse, setReverse] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
-      }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
+    if (subIndex === texts[index].length + 1 && !reverse) {
+      setTimeout(() => setReverse(true), 2000);
+      return;
     }
 
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      if (ref.current && observer) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        observer.unobserve(ref.current);
-      }
-      observer.disconnect();
-    };
-  }, []);
+    if (subIndex === 0 && reverse) {
+      setReverse(false);
+      setIndex((prev) => (prev + 1) % texts.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setSubIndex((prev) => prev + (reverse ? -1 : 1));
+    }, reverse ? 75 : 150);
+
+    return () => clearTimeout(timeout);
+  }, [subIndex, index, reverse, texts]);
 
   return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}
-    >
-      {children}
-    </div>
+    <span className="inline-block min-w-[1ch]">
+      {texts[index].substring(0, subIndex)}
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.8, repeat: Infinity }}
+        className="inline-block w-0.5 h-[1em] bg-indigo-600 dark:bg-indigo-400 align-middle ml-1"
+      />
+    </span>
   );
 };
 
@@ -75,7 +74,6 @@ const Portfolio: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [scrolled, setScrolled] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
   const [copyMessage, setCopyMessage] = useState<CopyMessage | null>(null);
 
   // Theme State
@@ -178,7 +176,6 @@ const Portfolio: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      setScrollY(window.scrollY);
 
       const sections = ['home', 'about', 'experience', 'projects', 'skills', 'contact'];
       let currentActive = 'home';
@@ -320,423 +317,573 @@ const Portfolio: React.FC = () => {
 
       {/* Hero Section */}
       <section id="home" className="pt-32 pb-20 md:pt-48 md:pb-32 px-6 bg-slate-50 dark:bg-slate-950 overflow-hidden relative transition-colors duration-300">
-        {/* Background blobs with parallax and fluid animation */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div style={{ transform: `translateY(${scrollY * 0.5}px)` }} className="absolute top-20 left-10 transition-transform duration-75 ease-out">
-            <div className="w-72 h-72 bg-indigo-600/10 dark:bg-indigo-600/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen"></div>
-          </div>
-          <div style={{ transform: `translateY(${scrollY * 0.2}px)` }} className="absolute bottom-20 right-10 transition-transform duration-75 ease-out">
-            <div className="w-96 h-96 bg-violet-600/10 dark:bg-violet-600/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen" style={{ animationDelay: '2s' }}></div>
-          </div>
+        {/* Animated Background Mesh */}
+        <div className="absolute inset-0 z-0 opacity-30 dark:opacity-20 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-500/30 blur-[120px] animate-blob"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-violet-500/30 blur-[120px] animate-blob animation-delay-2000"></div>
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-pink-500/20 blur-[100px] animate-blob animation-delay-4000"></div>
+          <div className="absolute inset-0 bg-grid-slate-100 dark:bg-grid-slate-900 bg-[size:30px_30px] [mask-image:radial-gradient(white,transparent_85%)]"></div>
         </div>
 
         <div className="container mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
-          <div className="flex-1 space-y-8 animate-in slide-in-from-bottom-10 fade-in duration-1000">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-sm font-medium border border-indigo-500/20 hover:bg-indigo-500/20 transition-colors cursor-default">
-              <Briefcase className="w-4 h-4" /> Flutter Developer
-            </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-              Crafting Exceptional <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 dark:from-indigo-400 dark:to-violet-400 animate-gradient-x">Mobile Experiences</span> with Flutter.
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex-1 space-y-8"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-sm font-semibold border border-indigo-500/20 backdrop-blur-sm"
+            >
+              <Sparkles className="w-4 h-4 animate-pulse" />
+              <span>Available for Hire</span>
+            </motion.div>
+
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-slate-900 dark:white tracking-tighter leading-[1.1]">
+              Built with <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 dark:from-indigo-400 dark:via-violet-400 dark:to-indigo-400 bg-[length:200%_auto] animate-gradient-x">
+                Precision.
+              </span>
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
-              I'm Harikrishna Manoj, a dedicated Flutter Developer specializing in building robust, cross-platform mobile applications that prioritize functionality and aesthetics.
+
+            <div className="text-2xl md:text-3xl font-bold text-slate-700 dark:text-slate-300">
+              I'm a <TypewriterText texts={["Flutter Developer", "Mobile Architect", "UI Enthusiast"]} />
+            </div>
+
+            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
+              Hi, I'm <span className="text-slate-900 dark:text-white font-bold underline decoration-indigo-500 decoration-2 underline-offset-4">Harikrishna Manoj</span>. I specialize in building top-tier, cross-platform mobile apps that feel native and look stunning.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <a href="#projects" onClick={(e) => scrollToSection(e, 'projects')} className="px-8 py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-medium rounded-full hover:bg-slate-800 dark:hover:bg-slate-200 transition-all shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 hover:scale-105 active:scale-95">
-                View Mobile Projects
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="flex flex-wrap gap-4"
+            >
+              <a
+                href="#projects"
+                onClick={(e) => scrollToSection(e, 'projects')}
+                className="group px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 flex items-center gap-2 active:scale-95"
+              >
+                View My Work
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
-              {/* Changed mailto to copy function for the primary button */}
-              <button onClick={copyEmailHandler} className="px-8 py-3.5 bg-transparent text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 font-medium rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-all hover:scale-105 active:scale-95">
+              <button
+                onClick={copyEmailHandler}
+                className="px-8 py-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 font-bold rounded-2xl hover:border-indigo-500 transition-all flex items-center gap-2 active:scale-95"
+              >
+                <Mail className="w-5 h-5" />
                 Copy Email
               </button>
-            </div>
+            </motion.div>
+
             <div className="flex gap-6 text-slate-500 pt-4">
-              <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110 hover:-translate-y-1">
+              <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110">
                 <Github className="w-6 h-6" aria-label="GitHub Profile" />
               </a>
-              <a href="https://www.linkedin.com/in/harikrishna-manoj-5851411b9/" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110 hover:-translate-y-1">
+              <a href="https://www.linkedin.com/in/harikrishna-manoj-5851411b9/" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110">
                 <Linkedin className="w-6 h-6" aria-label="LinkedIn Profile" />
               </a>
-              {/* Changed mailto to copy function for the icon */}
-              <button onClick={copyEmailHandler} className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-110 hover:-translate-y-1" aria-label="Copy Email Address">
-                <Mail className="w-6 h-6" />
-              </button>
             </div>
-          </div>
-          <div className="flex-1 relative animate-in slide-in-from-right-10 fade-in duration-1000 delay-200">
-            {/* Animated Profile Image Container */}
-            <div className="relative w-full aspect-square max-w-md mx-auto group">
-              <div className="relative w-full h-full animate-float hover:[animation-play-state:paused] transition-all duration-500">
-                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-2xl rotate-6 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity duration-500"></div>
-                <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 rounded-2xl rotate-3 transition-transform duration-500 group-hover:rotate-6 group-hover:scale-105"></div>
-                {/* Profile Image - UPDATED FOR GITHUB PAGES */}
-                <div className="relative h-full w-full bg-slate-100 dark:bg-slate-900 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center border border-slate-200 dark:border-slate-800 transition-all duration-500 group-hover:-translate-y-3 group-hover:border-indigo-500/30 group-hover:shadow-xl group-hover:shadow-indigo-500/20">
-                  <img
-                    src={`${import.meta.env.BASE_URL}profile.png`}
-                    alt="Harikrishna Manoj Profile"
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700 ease-out"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentNode;
-                      if (parent) {
-                        const fallbackDiv = document.createElement('div');
-                        fallbackDiv.className = 'text-slate-300 dark:text-slate-700 text-6xl font-bold flex items-center justify-center w-full h-full';
-                        fallbackDiv.textContent = 'HM';
-                        parent.appendChild(fallbackDiv);
-                      }
-                    }}
-                  />
-                </div>
-              </div>
+          </motion.div>
+
+          {/* Profile Image with 3D-ish effect */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="flex-1 relative flex justify-center items-center"
+          >
+            <div className="relative group">
+              {/* Decorative elements */}
+              <div className="absolute -inset-4 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+
+              <motion.div
+                animate={{
+                  y: [0, -15, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="relative w-72 h-72 md:w-96 md:h-96 rounded-[2.5rem] bg-white dark:bg-slate-900 border-4 border-white dark:border-slate-800 overflow-hidden shadow-2xl z-10"
+              >
+                <img
+                  src={`${import.meta.env.BASE_URL}profile.png`}
+                  alt="Harikrishna Manoj Profile"
+                  className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentNode;
+                    if (parent) {
+                      const fallbackDiv = document.createElement('div');
+                      fallbackDiv.className = 'text-slate-300 dark:text-slate-700 text-6xl font-black flex items-center justify-center w-full h-full bg-slate-100 dark:bg-slate-950';
+                      fallbackDiv.textContent = 'HM';
+                      parent.appendChild(fallbackDiv);
+                    }
+                  }}
+                />
+              </motion.div>
+
+              {/* Floaties */}
+              <motion.div
+                animate={{ y: [0, 10, 0], rotate: [0, 5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-0 -right-8 w-20 h-20 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 flex items-center justify-center z-20"
+              >
+                <Code2 className="w-10 h-10 text-indigo-500" />
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, -10, 0], rotate: [0, -5, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute -bottom-4 -left-8 w-20 h-20 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 flex items-center justify-center z-20"
+              >
+                <Briefcase className="w-10 h-10 text-violet-500" />
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce hidden md:block text-slate-400 dark:text-slate-600">
+
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:block text-slate-400"
+        >
           <ChevronDown className="w-6 h-6" />
-        </div>
+        </motion.div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-        <div className="container mx-auto px-6">
-          <RevealOnScroll>
-            <div className="max-w-3xl mx-auto text-center mb-16">
-              <h2 className="text-sm font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase mb-3">About Me</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">Building top-tier, user-centric mobile software</h3>
+      <section id="about" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="flex flex-col lg:flex-row gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:w-1/2 space-y-6"
+            >
+              <h2 className="text-indigo-600 dark:text-indigo-400 font-bold tracking-tight uppercase text-sm">About Me</h2>
+              <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight">
+                Passion for <span className="text-indigo-600 dark:text-indigo-400 font-black">Performance</span> and User Experience.
+              </h3>
               <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                Specializing in Flutter development, my expertise lies in crafting cross-platform mobile applications that prioritize exceptional user experiences. My dedication to staying current with industry trends drives my focus on producing top-tier software that seamlessly merges functionality with aesthetics, ensuring high-quality solutions for the dynamic mobile landscape.
+                As a Flutter Developer, I believe that every pixel matters. My journey in mobile development is driven by a desire to create software that isn't just functional, but a joy to use. I specialize in building complex, high-performance apps that bridge the gap between imagination and reality.
               </p>
-            </div>
-          </RevealOnScroll>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              { icon: <User />, title: "User-Centric Design", desc: "Prioritizing exceptional user experiences by merging seamless functionality with modern aesthetics." },
-              { icon: <Briefcase />, title: "Cross-Platform Expertise", desc: "Crafting robust mobile applications for both Android and iOS using the Flutter framework." },
-              { icon: <Code2 />, title: "Architecture Focus", desc: "Implementing Bloc, Clean Architecture, and SOLID principles for scalable and maintainable codebases." }
-            ].map((item, index) => (
-              <RevealOnScroll key={index} className={`delay-${index * 100}`}>
-                <div className="p-8 h-full rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10 hover:-translate-y-2 transition-all duration-300 group">
-                  <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-6 group-hover:bg-indigo-500/20 group-hover:scale-110 transition-all duration-300">
+              <div className="grid grid-cols-2 gap-6 pt-4">
+                <div className="space-y-1">
+                  <p className="text-3xl font-black text-slate-900 dark:text-white">1.5+</p>
+                  <p className="text-sm text-slate-500 uppercase font-bold tracking-wider">Years Experience</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-3xl font-black text-slate-900 dark:text-white">10+</p>
+                  <p className="text-sm text-slate-500 uppercase font-bold tracking-wider">Projects Completed</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                {
+                  icon: <User className="w-6 h-6 text-indigo-500" />,
+                  title: "User-Centric",
+                  desc: "Design that flows naturally with how people use apps.",
+                  color: "bg-indigo-500/10"
+                },
+                {
+                  icon: <Briefcase className="w-6 h-6 text-violet-500" />,
+                  title: "Cross-Platform",
+                  desc: "One codebase, premium feel on both Android & iOS.",
+                  color: "bg-violet-500/10"
+                },
+                {
+                  icon: <Code2 className="w-6 h-6 text-pink-500" />,
+                  title: "Clean Code",
+                  desc: "Maintainable architecture using Bloc & SOLID principles.",
+                  color: "bg-pink-500/10"
+                },
+                {
+                  icon: <Globe className="w-6 h-6 text-emerald-500" />,
+                  title: "Modern Stack",
+                  desc: "Leveraging the latest Flutter & Firebase features.",
+                  color: "bg-emerald-500/10"
+                }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-6 bento-card group hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5"
+                >
+                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110", item.color)}>
                     {item.icon}
                   </div>
-                  <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{item.title}</h4>
-                  <p className="text-slate-600 dark:text-slate-400">{item.desc}</p>
-                </div>
-              </RevealOnScroll>
-            ))}
+                  <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-20 bg-white dark:bg-slate-900 transition-colors duration-300">
+      <section id="experience" className="py-24 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-300">
         <div className="container mx-auto px-6">
-          <RevealOnScroll>
-            <div className="flex flex-col md:flex-row gap-16 max-w-6xl mx-auto">
-              <div className="md:w-1/3">
-                <h2 className="text-sm font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase mb-3">Career Path</h2>
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">My Professional Journey</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-8">
-                  My experience focuses on hands-on Flutter development, from core concepts to implementing complex state management and database solutions.
-                </p>
-                {/* RESUME BUTTON - UPDATED FOR GITHUB PAGES */}
-                <a
-                  href="Flutter_Developer_Harikrishna_9539440572.pdf"
-                  download="Flutter_Developer_Harikrishna_9539440572.pdf"
-                  className="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors group"
-                >
-                  Download Resume <Download className="w-4 h-4 transition-transform group-hover:translate-y-1" />
-                </a>
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+              <div className="space-y-4">
+                <h2 className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-tight text-sm">Professional Path</h2>
+                <h3 className="text-4xl font-black text-slate-900 dark:text-white">Experience & Education</h3>
               </div>
-
-              <div className="md:w-2/3 space-y-8">
-                {EXPERIENCES.map((exp, index) => (
-                  <div key={index} className="relative pl-8 border-l-2 border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition-colors duration-300 pb-8 last:pb-0 group">
-                    <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white dark:bg-slate-900 border-4 border-slate-300 dark:border-slate-700 group-hover:border-indigo-500 transition-colors duration-300 group-hover:scale-125"></div>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
-                      <h4 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">{exp.role}</h4>
-                      <span className="text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full w-fit mt-2 sm:mt-0 border border-transparent group-hover:border-slate-300 dark:group-hover:border-slate-700 transition-all">{exp.period}</span>
-                    </div>
-                    <h5 className="text-indigo-600 dark:text-indigo-400 font-medium mb-4">{exp.company}</h5>
-                    <p className="text-slate-600 dark:text-slate-400 mb-4">{exp.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {exp.tech.map((tag, i) => (
-                        <span key={i} className="text-xs font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                href="Flutter_Developer_Harikrishna_9539440572.pdf"
+                download="Flutter_Developer_Harikrishna_9539440572.pdf"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-all text-sm"
+              >
+                Download Resume <Download className="w-4 h-4" />
+              </motion.a>
             </div>
-          </RevealOnScroll>
+
+            <div className="space-y-12">
+              {EXPERIENCES.map((exp, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative pl-12 border-l-2 border-slate-200 dark:border-slate-800 last:border-0 pb-12 last:pb-0"
+                >
+                  <div className="absolute -left-[11px] top-0 w-5 h-5 rounded-full bg-indigo-600 border-4 border-white dark:border-slate-900 shadow-[0_0_10px_rgba(79,70,229,0.5)]"></div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
+                    <div>
+                      <h4 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{exp.role}</h4>
+                      <p className="text-indigo-600 dark:text-indigo-400 font-bold">{exp.company}</p>
+                    </div>
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-slate-200/50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 text-xs font-black uppercase tracking-widest whitespace-nowrap h-fit">
+                      {exp.period}
+                    </span>
+                  </div>
+
+                  <p className="text-slate-600 dark:text-slate-400 text-lg mb-6 max-w-2xl leading-relaxed">
+                    {exp.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {exp.tech.map((tag, i) => (
+                      <span key={i} className="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold transition-colors group-hover:border-indigo-500">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+      <section id="projects" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
         <div className="container mx-auto px-6">
-          <RevealOnScroll>
-            <div className="text-center mb-16">
-              <h2 className="text-sm font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase mb-3">Portfolio</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white">Mobile Applications</h3>
-            </div>
-          </RevealOnScroll>
+          <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+            <h2 className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-tight text-sm">My Work</h2>
+            <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white">Featured Mobile Apps</h3>
+            <p className="text-slate-600 dark:text-slate-400 text-lg">
+              A collection of production-ready mobile applications built with Flutter, focusing on performance, scalability, and UX.
+            </p>
+          </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {PROJECTS.map((project, index) => (
-              <RevealOnScroll key={index} className={`delay-${index * 100}`}>
-                <div className="group rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-2 transition-all duration-300 flex flex-col h-full">
-                  <div className={`h-48 ${project.color} relative overflow-hidden flex items-center justify-center`}>
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group p-4 bento-card hover:border-indigo-500/50 flex flex-col h-full bg-slate-50/50 dark:bg-slate-900/50"
+              >
+                {/* Mobile Mockup Container */}
+                <div className={cn("relative h-64 rounded-xl overflow-hidden mb-6 flex items-center justify-center transition-all duration-500 group-hover:scale-[1.02]", project.color)}>
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
 
-                    {/* ENHANCED Mock phone frame using project-specific color and icon */}
-                    <div className="w-1/2 h-full bg-slate-200 dark:bg-slate-800 rounded-b-[40px] shadow-2xl relative border-t-8 border-b-2 border-slate-300 dark:border-slate-700 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-slate-100 dark:bg-slate-950 rounded-b-lg"></div>
-                      <div className="p-2 h-full">
-                        <div className="h-full bg-slate-100 dark:bg-slate-950 rounded-lg flex flex-col justify-center items-center text-center">
-                          {/* Project Icon and Title as the "Screenshot" */}
-                          <div className={`p-4 rounded-xl ${project.color}/20 mb-3`}>
-                            {project.icon}
-                          </div>
-                          <p className="text-xs text-slate-500 font-bold mt-2 px-2 truncate">{project.title.split(' - ')[0]}</p>
-                        </div>
+                  {/* Phone Frame */}
+                  <motion.div
+                    whileHover={{ y: -10 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                    className="w-32 h-56 bg-white dark:bg-slate-950 rounded-[2.5rem] border-[4px] border-slate-900 dark:border-slate-800 shadow-2xl relative overflow-hidden flex flex-col pt-4"
+                  >
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-slate-900 dark:bg-slate-800 rounded-full"></div>
+                    <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+                      <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-900 mb-2">
+                        {project.icon}
                       </div>
+                      <p className="text-[8px] font-black uppercase tracking-tighter text-slate-500 dark:text-slate-400 truncate w-full px-2">
+                        {project.title.split(' - ')[0]}
+                      </p>
                     </div>
+                  </motion.div>
+                </div>
+
+                <div className="px-2 space-y-4 flex-grow flex flex-col">
+                  <div>
+                    <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                      {project.title}
+                    </h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mt-2">
+                      {project.description}
+                    </p>
                   </div>
-                  <div className="p-8 flex flex-col flex-grow">
-                    <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{project.title}</h4>
-                    <p className="text-slate-600 dark:text-slate-400 mb-6 flex-grow">{project.description}</p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {project.tags.map((tag, i) => (
-                        <span key={i} className="px-3 py-1 bg-indigo-500/10 rounded-md text-xs font-semibold text-indigo-600 dark:text-indigo-300 hover:bg-indigo-500/20 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors cursor-default">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-4 mt-auto">
-                      {/* Only render if github link exists */}
-                      {project.github && (
-                        <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:underline underline-offset-4">
-                          <Github className="w-4 h-4" /> Code
-                        </a>
-                      )}
-                      {/* Only render if store link exists */}
-                      {project.link && (
-                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors hover:underline underline-offset-4">
-                          <ExternalLink className="w-4 h-4" /> Store Link
-                        </a>
-                      )}
-                    </div>
+
+                  <div className="flex flex-wrap gap-1.5 mb-6">
+                    {project.tags.map((tag, i) => (
+                      <span key={i} className="px-2.5 py-1 rounded-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[10px] font-black uppercase text-slate-500 dark:text-slate-400">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-4 mt-auto pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
+                    {project.github && (
+                      <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+                        <Github className="w-4 h-4" /> Code
+                      </a>
+                    )}
+                    {project.link && (
+                      <a href={project.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+                        <ExternalLink className="w-4 h-4" /> Store
+                      </a>
+                    )}
                   </div>
                 </div>
-              </RevealOnScroll>
+              </motion.div>
             ))}
           </div>
 
-          <RevealOnScroll>
-            <div className="text-center mt-12">
-              <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-slate-100 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 font-medium rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/10 active:scale-95">
-                <Github className="w-4 h-4" /> View All Code on GitHub
-              </a>
-            </div>
-          </RevealOnScroll>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="mt-16 text-center"
+          >
+            <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black rounded-2xl shadow-xl shadow-slate-900/10 transition-all hover:bg-slate-800 dark:hover:bg-slate-100">
+              <Github className="w-5 h-5" />
+              Complete Project Archive
+            </a>
+          </motion.div>
         </div>
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 bg-white dark:bg-slate-900 text-white transition-colors duration-300">
+      <section id="skills" className="py-24 bg-slate-50 dark:bg-slate-900/30 transition-colors duration-300">
         <div className="container mx-auto px-6">
-          <RevealOnScroll>
-            <div className="flex flex-col md:flex-row gap-16 items-center max-w-6xl mx-auto">
-              <div className="md:w-1/2">
-                <h2 className="text-sm font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase mb-3">My Stack</h2>
-                <h3 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-6">Expertise in Mobile Development</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-                  My proficiency centers around the Flutter ecosystem, backed by a strong understanding of architecture patterns and scalable data solutions, using tools like Bloc for state management and Hive/Firebase for persistence.
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-100/50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-indigo-500/50 transition-colors">
-                    <h4 className="font-bold text-lg text-indigo-600 dark:text-indigo-400 mb-1">Flutter</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Primary Framework</p>
-                  </div>
-                  <div className="p-4 bg-slate-100/50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-indigo-500/50 transition-colors">
-                    <h4 className="font-bold text-lg text-indigo-600 dark:text-indigo-400 mb-1">Bloc/Provider</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">State Management</p>
-                  </div>
-                </div>
-              </div>
+          <div className="flex flex-col md:flex-row gap-16 items-start max-w-6xl mx-auto">
+            <div className="md:w-1/3 space-y-6 md:sticky md:top-32">
+              <h2 className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-tight text-sm">Expertise</h2>
+              <h3 className="text-4xl font-black text-slate-900 dark:text-white lg:text-5xl">My Modern Stack</h3>
+              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+                Specializing in the Flutter ecosystem with deep knowledge of architecture patterns and scalable infrastructure.
+              </p>
 
-              <div className="md:w-1/2 w-full">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {SKILLS.map((skill, index) => (
-                    <div key={index} className="bg-slate-100/50 dark:bg-slate-800/50 p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500/50 hover:bg-slate-200/80 dark:hover:bg-slate-800/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/10 backdrop-blur-sm">
-                      <div className="flex items-center gap-3 mb-4 text-indigo-600 dark:text-indigo-400">
-                        {skill.icon}
-                        <h4 className="font-bold text-slate-900 dark:text-white">{skill.category}</h4>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {skill.items.map((item, i) => (
-                          <span key={i} className="px-3 py-1 bg-slate-200/50 dark:bg-slate-700/50 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-indigo-500/20 hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors cursor-default">
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="p-6 rounded-2xl bg-indigo-600 text-white space-y-2 shadow-lg shadow-indigo-500/20">
+                <p className="text-xs font-black uppercase tracking-widest opacity-80">Primary Focus</p>
+                <p className="text-2xl font-black">Flutter & Dart Specialist</p>
               </div>
             </div>
-          </RevealOnScroll>
+
+            <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {SKILLS.map((skill, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-8 bento-card bg-white dark:bg-slate-900 border-none shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-none hover:shadow-xl transition-shadow group"
+                >
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                      {skill.icon}
+                    </div>
+                    <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{skill.category}</h4>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {skill.items.map((item, i) => (
+                      <span key={i} className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/80 text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+      <section id="contact" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
         <div className="container mx-auto px-6">
-          <RevealOnScroll>
-            <div className="max-w-5xl mx-auto bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row shadow-2xl">
+          <div className="max-w-6xl mx-auto bento-card border-none shadow-2xl flex flex-col md:flex-row overflow-hidden">
 
-              {/* Left Side: Info */}
-              <div className="md:w-5/12 p-10 bg-indigo-600 text-white relative overflow-hidden flex flex-col justify-between">
-                {/* Background Blobs with Animation */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500 rounded-full -mr-16 -mt-16 opacity-50 transition-transform duration-700 hover:scale-150 hover:rotate-45"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-500 rounded-full -ml-12 -mb-12 opacity-50 transition-transform duration-700 delay-100 hover:scale-150 hover:-rotate-45"></div>
+            {/* Contact Info Panel */}
+            <div className="md:w-5/12 p-12 bg-indigo-600 text-white relative flex flex-col justify-between">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse"></div>
 
-                <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-4">Let's connect and build!</h3>
-                  <p className="text-indigo-100 mb-8">
-                    I'm currently seeking new Flutter development opportunities. Reach out via email or connect with me on LinkedIn.
+              <div className="relative z-10 space-y-8">
+                <div className="space-y-4">
+                  <h3 className="text-4xl font-black tracking-tight leading-tight">Ready to build something great?</h3>
+                  <p className="text-indigo-100/80 text-lg">
+                    Always looking for exciting Flutter projects and professional collaborations.
                   </p>
+                </div>
 
-                  <div className="space-y-4 mb-12">
-                    {/* EMAIL: Click to Copy */}
-                    <button onClick={copyEmailHandler} className="flex items-center gap-4 group/item hover:bg-white/10 p-3 rounded-xl -ml-3 transition-all duration-300 w-full text-left" aria-label="Copy Email Address">
-                      <div className="w-10 h-10 bg-indigo-500/50 rounded-full flex items-center justify-center backdrop-blur-sm group-hover/item:bg-white group-hover/item:text-indigo-600 transition-all duration-300 group-hover/item:scale-110 group-hover/item:rotate-6 shadow-inner">
-                        <Mail className="w-5 h-5" />
-                      </div>
-                      <span className="group-hover/item:translate-x-1 transition-transform font-medium truncate max-w-[200px] sm:max-w-none">{EMAIL_ADDRESS}</span>
-                    </button>
-
-                    {/* PHONE: Click to Copy */}
-                    <button onClick={copyPhoneHandler} className="flex items-center gap-4 group/item hover:bg-white/10 p-3 rounded-xl -ml-3 transition-all duration-300 w-full text-left" aria-label="Copy Phone Number">
-                      <div className="w-10 h-10 bg-indigo-500/50 rounded-full flex items-center justify-center backdrop-blur-sm group-hover/item:bg-white group-hover/item:text-indigo-600 transition-all duration-300 group-hover/item:scale-110 group-hover/item:rotate-6 shadow-inner">
-                        <Terminal className="w-5 h-5" />
-                      </div>
-                      <span className="group-hover/item:translate-x-1 transition-transform font-medium">{PHONE_NUMBER}</span>
-                    </button>
-                  </div>
-
-                  {/* Social Links moved here */}
-                  <div>
-                    <p className="text-indigo-200 mb-4 text-sm font-semibold uppercase tracking-wider">Connect with me</p>
-                    <div className="flex gap-4 text-white">
-                      <a href="https://www.linkedin.com/in/harikrishna-manoj-5851411b9/" target="_blank" rel="noopener noreferrer" className="p-3 bg-indigo-500 rounded-full hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-900/30 active:scale-95 group/link" aria-label="LinkedIn Profile">
-                        <Linkedin className="w-5 h-5 transition-transform group-hover/link:scale-110" />
-                      </a>
-                      <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="p-3 bg-indigo-500 rounded-full hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-900/30 active:scale-95 group/link" aria-label="GitHub Profile">
-                        <Github className="w-5 h-5 transition-transform group-hover/link:scale-110" />
-                      </a>
+                <div className="space-y-4">
+                  <button
+                    onClick={copyEmailHandler}
+                    className="w-full p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-all flex items-center gap-4 group text-left border border-white/10"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Mail className="w-5 h-5" />
                     </div>
-                  </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase opacity-60">Email Address</p>
+                      <p className="font-bold truncate max-w-[200px]">{EMAIL_ADDRESS}</p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={copyPhoneHandler}
+                    className="w-full p-4 rounded-2xl bg-white/10 hover:bg-white/20 transition-all flex items-center gap-4 group text-left border border-white/10"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Terminal className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase opacity-60">Get in Touch</p>
+                      <p className="font-bold truncate max-w-[200px]">{PHONE_NUMBER}</p>
+                    </div>
+                  </button>
                 </div>
               </div>
 
-              {/* Right Side: Form */}
-              <div className="md:w-7/12 p-8 md:p-12 bg-white dark:bg-slate-900 flex flex-col justify-center">
-                <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">Send a Message</h4>
+              <div className="relative z-10 flex gap-4 pt-12 border-t border-white/10 mt-12">
+                <a href="https://www.linkedin.com/in/harikrishna-manoj-5851411b9/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-indigo-600 hover:-translate-y-1 transition-all shadow-lg active:scale-95">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a href="https://github.com/Harikrishna-Manoj" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-indigo-600 hover:-translate-y-1 transition-all shadow-lg active:scale-95">
+                  <Github className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
 
+            {/* Form Panel */}
+            <div className="md:w-7/12 p-12 bg-white dark:bg-slate-900 relative">
+              <AnimatePresence mode="wait">
                 {isSubmitted ? (
-                  <div className="h-full flex flex-col items-center justify-center py-12 text-center animate-in fade-in zoom-in duration-500">
-                    <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6">
-                      <CheckCircle className="w-10 h-10 text-green-500" />
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="h-full flex flex-col items-center justify-center text-center space-y-6"
+                  >
+                    <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                      <CheckCircle className="w-10 h-10" />
                     </div>
-                    <h5 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Message Sent!</h5>
-                    <p className="text-slate-600 dark:text-slate-400 max-w-xs">
-                      Thanks for reaching out. Your email client should open shortly with the pre-filled message.
-                    </p>
-                    <button
-                      onClick={() => setIsSubmitted(false)}
-                      className="mt-8 px-6 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm font-medium"
-                    >
-                      Send another message
+                    <div className="space-y-2">
+                      <h4 className="text-2xl font-black text-slate-900 dark:text-white">Message Set!</h4>
+                      <p className="text-slate-500 dark:text-slate-400">Opening your mail client...</p>
+                    </div>
+                    <button onClick={() => setIsSubmitted(false)} className="text-sm font-black text-indigo-600 uppercase tracking-widest">
+                      Send Another
                     </button>
-                  </div>
+                  </motion.div>
                 ) : (
-                  <form onSubmit={handleFormSubmit} className="space-y-6">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Name</label>
+                  <motion.form
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    onSubmit={handleFormSubmit}
+                    className="space-y-6"
+                  >
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 ml-4">Full Name</label>
                       <input
                         type="text"
-                        id="name"
                         name="name"
                         required
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
-                        placeholder="Your Name"
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-transparent focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-slate-900 dark:text-white font-bold"
+                        placeholder="John Doe"
                       />
                     </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Email</label>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 ml-4">Email Address</label>
                       <input
                         type="email"
-                        id="email"
                         name="email"
                         required
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
-                        placeholder="your@email.com"
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-transparent focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-slate-900 dark:text-white font-bold"
+                        placeholder="john@example.com"
                       />
                     </div>
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-2">Message</label>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase text-slate-500 dark:text-slate-400 ml-4">Message</label>
                       <textarea
-                        id="message"
                         name="message"
                         rows={4}
                         required
                         value={formData.message}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 resize-none"
-                        placeholder="How can I help you?"
+                        className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-transparent focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 outline-none transition-all text-slate-900 dark:text-white font-bold resize-none"
+                        placeholder="Tell me about your project..."
                       ></textarea>
                     </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl shadow-xl hover:shadow-2xl transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 group"
                     >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
+                      {isSubmitting ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                         <>
                           Send Message
-                          <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                          <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         </>
                       )}
                     </button>
-                  </form>
+                  </motion.form>
                 )}
-              </div>
+              </AnimatePresence>
             </div>
-          </RevealOnScroll>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-8 transition-colors duration-300">
-        <div className="container mx-auto px-6 text-center text-slate-500">
-          <p>&copy; {new Date().getFullYear()} Harikrishna Manoj. Built with React and Tailwind CSS.</p>
+      <footer className="py-12 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 transition-colors">
+        <div className="container mx-auto px-6 text-center space-y-4">
+          <div className="flex justify-center flex-wrap gap-x-8 gap-y-4 text-xs font-black uppercase tracking-widest text-slate-400">
+            {NAV_LINKS.map(link => (
+              <a key={link.id} href={link.href} onClick={e => scrollToSection(e, link.id)} className="hover:text-indigo-600 transition-colors">
+                {link.name}
+              </a>
+            ))}
+          </div>
+          <p className="text-slate-400 text-sm">&copy; {new Date().getFullYear()} Harikrishna Manoj. Built with passion & precision.</p>
         </div>
       </footer>
     </div>
